@@ -36,13 +36,19 @@ export default {
     sending:''
     };
   },
+  created(){
+    this.$nextTick(() => {
+      this.$refs.myname.focus()
+
+    })
+  },
   methods:{
     IsInput(event){
       const updatedText = event.target.value;
       this.inputText = updatedText;
     },
     outFocus(){
-      this.sending=''
+      this.sending=null
     },
     onFocus(){
       this.sending='1'
@@ -78,13 +84,15 @@ $font-color: #ffffff;
     font-size: 0;
 
     &__input {
-
+      width: 300px;
+      height: 30px;
       display: flex;
       position: relative;
+
       &--input {
         position: relative;
         border: 0;
-        width: 95%;
+        width: 100%;
         border-left-width:0;
         border-right-width:0;
         border-top-width:0;
@@ -92,7 +100,7 @@ $font-color: #ffffff;
       }
       &--input:focus {
         border: 0;
-        width: 95%;
+        width: 100%;
         outline: none;
         border-left-width:0;
         border-right-width:0;
@@ -104,7 +112,7 @@ $font-color: #ffffff;
         width: 20px;
         height: 20px;
         position: absolute;
-        top: 0;
+        top: 4px;
         right: 0;
         background: url('~/src/assets/deletebutton.svg');
         background-size: 18px 18px;
@@ -114,21 +122,13 @@ $font-color: #ffffff;
       }
 
     }
-    &--underline {
-      width: 99%;
-      background: url('~/src/assets/textfieldunderline.svg');
-      border: none;
-      &--active {
-        background: url('~/src/assets/inputactive.svg');
-        width: 99%;
-        border: none;
-      }
-    }
+
 
   }
 
 
   &__sendbutton {
+    margin-left: 10px;
     width: 24px;
     height: 24px;
     background: url('~/src/assets/textfieldsendbutton.svg');
@@ -138,8 +138,7 @@ $font-color: #ffffff;
     &--texting {
       @extend .todo-textfield__sendbutton !optional;
       background: url('~/src/assets/sendbutton_active.svg');
-      color: dodgerblue;
-      cursor: default;
+      cursor: pointer;
     }
   }
 }
