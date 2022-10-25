@@ -20,8 +20,9 @@ export default {
   created(){
       const date=new Date();
     const dayStr = new Date(date.getFullYear(),date.getMonth()+1,date.getDay()-1).toString();
-      this.curDate=`${date.getMonth()+1}/${date.getDate()}
-      ${dayStr.slice(0, 3)}`
+      this.curDate=`${date.getMonth()+1}/${date.getDate()}\n
+      ${dayStr.slice(0, 3)}
+      `
     }
 };
 
@@ -36,7 +37,7 @@ $font-color: #ffffff;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 30px;
+  height: 48px;
   background: #6c77a7;
   padding: 0 20px;
 
@@ -64,8 +65,8 @@ $font-color: #ffffff;
   &__title {
     font-family: $font-family;
     font-weight: 700;
-    font-size: 12px;
-    line-height: 14px;
+    font-size: 24px;
+    line-height: 24px;
     color: $font-color;
   }
 
@@ -81,8 +82,8 @@ $font-color: #ffffff;
     position: relative;
     font-family: $font-family;
     font-weight: 700;
-    font-size: 8px;
-    line-height: 10px;
+    font-size: 16px;
+    line-height: 20px;
     color: $font-color;
 
     &--today {
