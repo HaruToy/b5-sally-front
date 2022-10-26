@@ -40,13 +40,17 @@ $font-color: #ffffff;
   height: 48px;
   background: #6c77a7;
   padding: 0 20px;
-
+  position: absolute;
+  width: 1280px;
+  height: 48px;
+  left: 0px;
+  top: 0px;
   &__left {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   &__icon {
@@ -54,8 +58,6 @@ $font-color: #ffffff;
     height: 24px;
     background: url('~/src/assets/topbarleftbutton.svg');
     cursor: pointer;
-
-
   }
   &__icon:hover {
     @extend .todo-topbar__icon;
@@ -83,7 +85,7 @@ $font-color: #ffffff;
     font-family: $font-family;
     font-weight: 700;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 19px;
     color: $font-color;
 
     &--today {

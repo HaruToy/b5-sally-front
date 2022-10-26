@@ -22,7 +22,7 @@ export default {
 <style>
 .getName{
   margin-left: 120px;
-  margin-top: 60px;
+  padding-top: 60px;
   flex-direction: column;
   justify-content: space-between;
 }

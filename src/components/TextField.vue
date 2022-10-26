@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form class="todo-textfield" action="">
+    <div class="todo-textfield" >
       <div class="todo-textfield__inputfield">
         <div class="todo-textfield__inputfield__input">
           <input
@@ -9,19 +9,29 @@
             aria-label="test"
             type="text"
             placeholder="Input our name"
-            :value="inputText"
+            :value="$store.state.name"
             @input="IsInput"
             @blur="outFocus"
             @focus="onFocus"
+            @keyup.enter="storeName"
           />
-            <button v-if="inputText" class="todo-textfield__inputfield__input--deletebutton" type="button" @click="deleteName"></button>
+          <button
+            v-if="$store.state.name"
+            class="todo-textfield__inputfield__input--deletebutton"
+            type="button"
+            @click="deleteName"
+          ></button>
         </div>
-          <!--<button class="todo-textfield__inputfield--underline"></button>-->
       </div>
 
-      <button v-if="sending&&inputText" class="todo-textfield__sendbutton--texting" type="button"></button>
-      <button v-else class="todo-textfield__sendbutton" type="button"></button>
-    </form>
+      <button
+        v-if="sending && $store.state.name"
+        class="todo-textfield__sendbutton--texting"
+        type="button"
+        @click="storeName"
+      ></button>
+      <button v-else class="todo-textfield__sendbutton" type="button" @click="storeName"></button>
+    </div>
   </div>
 </template>
 
@@ -31,39 +41,39 @@
 export default {
   name: 'TextField.vue',
   data() {
-  return {
-    inputText:'',
-    sending:''
+    return {
+      inputText: '',
+      sending: '',
     };
   },
-  created(){
+  created() {
     this.$nextTick(() => {
-      this.$refs.myname.focus()
-
-    })
+      this.$refs.myname.focus();
+    });
   },
-  methods:{
-    IsInput(event){
+  methods: {
+    IsInput(event) {
       const updatedText = event.target.value;
-      this.inputText = updatedText;
+      this.$store.state.name = updatedText;
+      console.log(this.$store.state.name);
     },
-    outFocus(){
-      this.sending=null
+    outFocus() {
+      this.sending = null;
     },
-    onFocus(){
-      this.sending='1'
+    onFocus() {
+      this.sending = '1';
     },
-    deleteName(){
-      this.inputText=null;
+    deleteName() {
+      this.$store.state.name = null;
 
       this.$nextTick(() => {
-        this.$refs.myname.focus()
-
-      })
-    }
-
-  }
-
+        this.$refs.myname.focus();
+      });
+    },
+    storeName() {
+      console.log(`My name is ${this.$store.state.name}`);
+    },
+  },
 };
 </script>
 
@@ -84,8 +94,8 @@ $font-color: #ffffff;
     font-size: 0;
 
     &__input {
-      width: 300px;
-      height: 30px;
+      width: 648px;
+      height: 32px;
       display: flex;
       position: relative;
 
@@ -93,18 +103,24 @@ $font-color: #ffffff;
         position: relative;
         border: 0;
         width: 100%;
-        border-left-width:0;
-        border-right-width:0;
-        border-top-width:0;
-        border-bottom: solid 1px #CCCCCC;
+        border-left-width: 0;
+        border-right-width: 0;
+        border-top-width: 0;
+        border-bottom: solid 1px #cccccc;
+      }
+      &--input::placeholder {
+        font-family: $font-family;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
       }
       &--input:focus {
         border: 0;
         width: 100%;
         outline: none;
-        border-left-width:0;
-        border-right-width:0;
-        border-top-width:0;
+        border-left-width: 0;
+        border-right-width: 0;
+        border-top-width: 0;
         border-bottom: solid 1px dodgerblue;
       }
 
@@ -116,18 +132,14 @@ $font-color: #ffffff;
         right: 0;
         background: url('~/src/assets/deletebutton.svg');
         background-size: 18px 18px;
-        border:none;
+        border: none;
         cursor: pointer;
-
       }
-
     }
-
-
   }
 
-
   &__sendbutton {
+    display: flex;
     margin-left: 10px;
     width: 24px;
     height: 24px;
