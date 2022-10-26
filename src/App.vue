@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <TopBar></TopBar>
+    <TopBar ></TopBar>
     <div class="getName" >
       <p class="welcome">Welcome Newbie!<br> MyTodo makes it easy to stay organized and manage your life.</p>
       <p class="title">What is your name?</p>
@@ -20,18 +20,24 @@ export default {
 };
 </script>
 <style>
+#app{
+  display: flex;
+  flex-direction: column;
+}
 .getName{
+  display: flex;
+  flex-direction: row;
   margin-left: 120px;
-  padding-top: 60px;
   flex-direction: column;
   justify-content: space-between;
 }
 .welcome{
   /* Title */
   /*display:inline;*/
+  position: relative;
+  top:60px;
   height: 84px;
   width:fit-content;
-
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
@@ -41,6 +47,8 @@ export default {
   color: #2C3E50;
 }
 .title{
+  position: relative;
+  top:24px;
   width:fit-content;
   height: 72px;
   font-family: 'Roboto';
@@ -52,9 +60,6 @@ export default {
   color: #2C3E50;
 }
 .text{
-
-  width: 424px;
-  height: 72px;
 
 }
 </style>

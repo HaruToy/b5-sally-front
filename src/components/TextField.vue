@@ -100,7 +100,6 @@ $font-color: #ffffff;
       position: relative;
 
       &--input {
-        position: relative;
         border: 0;
         width: 100%;
         border-left-width: 0;
@@ -128,7 +127,7 @@ $font-color: #ffffff;
         width: 20px;
         height: 20px;
         position: absolute;
-        top: 4px;
+        top: 8px;
         right: 0;
         background: url('~/src/assets/deletebutton.svg');
         background-size: 18px 18px;
@@ -139,8 +138,6 @@ $font-color: #ffffff;
   }
 
   &__sendbutton {
-    display: flex;
-    margin-left: 10px;
     width: 24px;
     height: 24px;
     background: url('~/src/assets/textfieldsendbutton.svg');
