@@ -1,37 +1,35 @@
 <template>
-  <div>
-    <div class="todo-textfield" >
-      <div class="todo-textfield__inputfield">
-        <div class="todo-textfield__inputfield__input">
-          <input
-            ref="myname"
-            class="todo-textfield__inputfield__input--input"
-            aria-label="test"
-            type="text"
-            placeholder="Input our name"
-            :value="$store.state.name"
-            @input="IsInput"
-            @blur="outFocus"
-            @focus="onFocus"
-            @keyup.enter="storeName"
-          />
-          <button
-            v-if="$store.state.name"
-            class="todo-textfield__inputfield__input--deletebutton"
-            type="button"
-            @click="deleteName"
-          ></button>
-        </div>
+  <div class="todo-textfield">
+    <div class="todo-textfield__inputfield">
+      <div class="todo-textfield__inputfield__input">
+        <input
+          ref="myname"
+          v-model="inputText"
+          class="todo-textfield__inputfield__input--input"
+          aria-label="test"
+          type="text"
+          placeholder="Input our name"
+          @blur="outFocus"
+          @focus="onFocus"
+          @keyup.enter="storeName"
+        />
+        <button
+          v-if="inputText && isFocused"
+          ref="delete"
+          class="todo-textfield__inputfield__input--deletebutton"
+          type="button"
+          @mousedown="deleteName"
+        ></button>
       </div>
-
-      <button
-        v-if="sending && $store.state.name"
-        class="todo-textfield__sendbutton--texting"
-        type="button"
-        @click="storeName"
-      ></button>
-      <button v-else class="todo-textfield__sendbutton" type="button" @click="storeName"></button>
     </div>
+
+    <button
+      v-if="inputText && isFocused"
+      class="todo-textfield__sendbutton--texting"
+      type="button"
+      @mousedown="storeName"
+    ></button>
+    <button v-else class="todo-textfield__sendbutton" type="button"></button>
   </div>
 </template>
 
@@ -43,7 +41,7 @@ export default {
   data() {
     return {
       inputText: '',
-      sending: '',
+      isFocused: false,
     };
   },
   created() {
@@ -52,26 +50,33 @@ export default {
     });
   },
   methods: {
-    IsInput(event) {
-      const updatedText = event.target.value;
-      this.$store.state.name = updatedText;
-      console.log(this.$store.state.name);
-    },
-    outFocus() {
-      this.sending = null;
-    },
-    onFocus() {
-      this.sending = '1';
-    },
     deleteName() {
-      this.$store.state.name = null;
+      console.log('asldkfjaslkfj');
+      this.inputText = '';
+      
+      setTimeout(() => this.$refs.myname.focus(), 0);
 
-      this.$nextTick(() => {
-        this.$refs.myname.focus();
-      });
     },
     storeName() {
-      console.log(`My name is ${this.$store.state.name}`);
+      console.log(`My name is ${this.inputText}`);
+      if (this.inputText != null) {
+        localStorage.setItem('name', JSON.stringify(this.inputText));
+        this.$emit('storeName');
+      }
+    },
+    outFocus() {
+      this.isFocused = false;
+      // const deleteBtn = this.$refs.delete;
+      // if (deleteBtn !== undefined) {
+      //   deleteBtn.style.display = 'none';
+      // }
+    },
+    onFocus() {
+      this.isFocused = true;
+      // const deleteBtn = this.$refs.delete;
+      // if (deleteBtn !== undefined) {
+      //   deleteBtn.style.display = 'block';
+      // }
     },
   },
 };
@@ -100,19 +105,20 @@ $font-color: #ffffff;
       position: relative;
 
       &--input {
-        border: 0;
         width: 100%;
-        border-left-width: 0;
-        border-right-width: 0;
         border-top-width: 0;
-        border-bottom: solid 1px #cccccc;
+        border-right-width: 0;
+        border-bottom: 1px solid #cccccc;
+        border-left-width: 0;
       }
+
       &--input::placeholder {
         font-family: $font-family;
         font-weight: 400;
         font-size: 16px;
         line-height: 24px;
       }
+
       &--input:focus {
         border: 0;
         width: 100%;
@@ -138,6 +144,8 @@ $font-color: #ffffff;
   }
 
   &__sendbutton {
+    position: relative;
+    left: 10px;
     width: 24px;
     height: 24px;
     background: url('~/src/assets/textfieldsendbutton.svg');

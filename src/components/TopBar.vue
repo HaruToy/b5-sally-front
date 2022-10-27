@@ -15,7 +15,7 @@
 export default {
   name: 'TopBar',
   data(){
-    " "
+    return {}
   },
   created(){
       const date=new Date();
@@ -40,11 +40,8 @@ $font-color: #ffffff;
   height: 48px;
   background: #6c77a7;
   padding: 0 20px;
-  position: absolute;
   width: 1280px;
   height: 48px;
-  left: 0px;
-  top: 0px;
   &__left {
     display: flex;
     flex-direction: row;
@@ -89,7 +86,7 @@ $font-color: #ffffff;
     color: $font-color;
 
     &--today {
-      @extend .todo-topbar__data !optional;
+      @extend .todo-topbar__date;
       color: #99fee7;
       text-decoration: underline;
       cursor: pointer;
