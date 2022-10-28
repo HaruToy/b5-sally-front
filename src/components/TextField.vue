@@ -34,7 +34,7 @@
 </template>
 
 <script>
-// import Vue from 'vue';
+import store  from '@/store/index';
 
 export default {
   name: 'TextField.vue',
@@ -51,32 +51,21 @@ export default {
   },
   methods: {
     deleteName() {
-      console.log('asldkfjaslkfj');
       this.inputText = '';
-      
-      setTimeout(() => this.$refs.myname.focus(), 0);
 
+      setTimeout(() => this.$refs.myname.focus(), 0);
     },
     storeName() {
-      console.log(`My name is ${this.inputText}`);
       if (this.inputText != null) {
-        localStorage.setItem('name', JSON.stringify(this.inputText));
-        this.$emit('storeName');
+        store.commit('setName', this.inputText);
+         this.$emit('storeName');
       }
     },
     outFocus() {
       this.isFocused = false;
-      // const deleteBtn = this.$refs.delete;
-      // if (deleteBtn !== undefined) {
-      //   deleteBtn.style.display = 'none';
-      // }
     },
     onFocus() {
       this.isFocused = true;
-      // const deleteBtn = this.$refs.delete;
-      // if (deleteBtn !== undefined) {
-      //   deleteBtn.style.display = 'block';
-      // }
     },
   },
 };
@@ -102,7 +91,6 @@ $font-color: #ffffff;
       width: 648px;
       height: 32px;
       display: flex;
-      position: relative;
 
       &--input {
         width: 100%;
@@ -132,9 +120,8 @@ $font-color: #ffffff;
       &--deletebutton {
         width: 20px;
         height: 20px;
-        position: absolute;
-        top: 8px;
-        right: 0;
+        margin-top: 8px;
+        margin-left: -20px;
         background: url('~/src/assets/deletebutton.svg');
         background-size: 18px 18px;
         border: none;
@@ -144,13 +131,11 @@ $font-color: #ffffff;
   }
 
   &__sendbutton {
-    position: relative;
-    left: 10px;
+    margin-left:11px;
     width: 24px;
     height: 24px;
     background: url('~/src/assets/textfieldsendbutton.svg');
     border: none 10px;
-    cursor: pointer;
 
     &--texting {
       @extend .todo-textfield__sendbutton !optional;

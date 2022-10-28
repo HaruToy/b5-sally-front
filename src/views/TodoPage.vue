@@ -1,7 +1,7 @@
 <template>
   <div id="todo">
     <div class="todo__hello">
-      <p>Good {{ Current }}, {{ UserName }}<br/>
+      <p>Good {{ Current }}, {{ getNm }}<br/>
       <span class="todo_hello__what2do">You've got
       <span class="todo__hello__what2do--cur">{{ numDid }}/{{ numTodo }}</span>
       task Today!</span></p>
@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import store from '../store/index'
 import OutlineTextField from '../components/OutlineTextField.vue'
 
 export default {
@@ -18,14 +19,19 @@ export default {
   components: { OutlineTextField },
   data() {
     return {
-      UserName: '',
+
       Current: '',
       numDid: 0,
       numTodo: 0,
     };
   },
+  computed:{
+    getNm(){
+      return store.getters.getName
+    }
+  },
   created() {
-    this.UserName = JSON.parse(localStorage.getItem('name'));
+
     const curHour = new Date().getHours();
     if (curHour > 7 && curHour <= 12) {
       this.Current = 'morning';
@@ -36,11 +42,10 @@ export default {
     } else if (curHour > 22 || curHour<=7) {
       this.Current = 'night';
     }
-    // if(today.getHours())
-    // this.HelloMessage=
   },
   methods:{
     addTask(){
+      this.numDid+=1;
       this.numTodo+=1;
     }
   },

@@ -78,7 +78,6 @@ $font-color: #ffffff;
   }
 
   &__date {
-    position: relative;
     font-family: $font-family;
     font-weight: 700;
     font-size: 16px;

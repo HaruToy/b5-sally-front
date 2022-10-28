@@ -37,6 +37,7 @@
 
 <script>
 import axios from 'axios';
+import store from '../store/index'
 
 export default {
   name: 'OutlineTextField',
@@ -52,7 +53,6 @@ export default {
     IsInput(event) {
       const updatedText = event.target.value;
       this.content = updatedText;
-      console.log(this.content);
     },
     outFocus() {
       this.sending = null;
@@ -69,12 +69,11 @@ export default {
       if (this.content) {
         const cur = new Date();
         const task = {
-          owner: localStorage.getItem('name').substring(1, localStorage.getItem('name').length - 1),
+          owner: store.getters.getName,
           content: this.content,
           status: 'REGISTERED',
           created_date: `${cur.toISOString()}`,
         };
-        console.log(task);
         axios.post('http://localhost:8080/api/tasks', task).then((response) => {
           console.log(response.data);
         });
@@ -106,7 +105,6 @@ $font-color: #ffffff;
       width: 648px;
       height: 48px;
       display: flex;
-      position: relative;
 
       &--input {
         border: 0;
@@ -141,9 +139,8 @@ $font-color: #ffffff;
       &--deletebutton {
         width: 20px;
         height: 20px;
-        position: absolute;
-        top: 30%;
-        right: 2%;
+        margin-top: 14px;
+        margin-left: -30px;
         background: url('~/src/assets/deletebutton.svg');
         background-size: 18px 18px;
         border: none;
@@ -153,13 +150,11 @@ $font-color: #ffffff;
   }
 
   &__sendbutton {
-    position: relative;
-    left: 10px;
+    margin-left:11px;
     width: 24px;
     height: 24px;
     background: url('~/src/assets/textfieldsendbutton.svg');
     border: none 10px;
-    cursor: pointer;
 
     &--texting {
       @extend .todo-textfield__sendbutton !optional;
