@@ -101,7 +101,7 @@ $font-size: 16px;
     height: 40px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
-
+    background-color: #ffffff;
     display: flex;
     justify-content: left;
     align-items: center;
@@ -121,6 +121,7 @@ $font-size: 16px;
       cursor: pointer;
     }
     &__down {
+
       width: 16px;
       height: 16px;
       border: none;
@@ -137,7 +138,9 @@ $font-size: 16px;
     background-color: #ffffff;
     //padding: 12px 16px;
     &__button {
+      background-color: #ffffff;
       &__selected {
+        background-color: #ffffff;
         font-style: normal;
         font-weight: 400;
         font-family: $font-family;
@@ -146,7 +149,7 @@ $font-size: 16px;
         text-align: left;
         width: 100px;
         height: 40px;
-        background-color: #ffffff;
+
         color: black;
         font-size: 16px;
         border: none;

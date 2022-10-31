@@ -7,8 +7,18 @@
       task Today!</span></p>
       <OutlineTextField @addTask="addTask"></OutlineTextField>
     </div>
-    <div class="todo__list">
-      <MyDropdown :sel-item="selectedItem" :items="dropdownList"></MyDropdown>
+
+
+    <div class="todo__list" :style="[numTodo?{'justify-content':'flex-start'}:{'justify-content':'center'}]">
+      <div v-show="numTodo" class="todo__list__menu">
+        <div class="todo__list__menu__left">
+          <MyDropdown :sel-item="selectedItem" :items="dropdownList"></MyDropdown>
+        </div>
+          <button class="todo__list__menu__clear">Clear All</button>
+
+
+      </div>
+      <p v-show="!numTodo" class="todo__list--noTask">There is no task.</p>
     </div>
   </div>
 </template>
@@ -32,12 +42,10 @@ export default {
       ]
     };
   },
-
-
   computed:{
     getNm(){
       return store.getters.getName
-    }
+    },
   },
   created() {
 
@@ -73,13 +81,47 @@ $font-color: #2C3E50;
   flex-direction: column;
 }
 .todo__list{
-  @extend .todo;
+  display: flex;
+  background: #F2F2F2;
+  min-height: 400px;
+
+  &__menu{
+    width: 1280px;
+    display:flex;
+    margin-top:24px;
+    margin-left:60px;
+    height: 40px;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &__left{
+      justify-content: flex-start;
+      gap: 12px;
+    }
+    &__clear{
+      justify-content: flex-end;
+      align-items: center;
+      border:none;
+      cursor:pointer;
+      margin-left:64px;
+    }
+  }
+  &--noTask{
+    line-height: 400px;
+    text-align: center;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    color: #000000;
+    opacity: 0.6;
+  }
 }
 .todo__hello {
   @extend .todo;
   justify-content: space-between;
   align-items: flex-start;
-
+  margin-bottom: 40px;
   font-weight: 400;
   font-size:24px;
   line-height: 36px;
