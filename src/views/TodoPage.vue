@@ -7,24 +7,33 @@
       task Today!</span></p>
       <OutlineTextField @addTask="addTask"></OutlineTextField>
     </div>
+    <div class="todo__list">
+      <MyDropdown :sel-item="selectedItem" :items="dropdownList"></MyDropdown>
+    </div>
   </div>
 </template>
 
 <script>
+import MyDropdown from '@/components/MyDropdown.vue';
 import store from '../store/index'
 import OutlineTextField from '../components/OutlineTextField.vue'
 
 export default {
   name: 'TodoPage',
-  components: { OutlineTextField },
+  components: { MyDropdown, OutlineTextField },
   data() {
     return {
-
       Current: '',
       numDid: 0,
       numTodo: 0,
+      selectedItem:'Oldest',
+      dropdownList:[
+        'Oldest','Latest'
+      ]
     };
   },
+
+
   computed:{
     getNm(){
       return store.getters.getName
@@ -62,6 +71,9 @@ $font-color: #2C3E50;
   color:$font-color;
   display: flex;
   flex-direction: column;
+}
+.todo__list{
+  @extend .todo;
 }
 .todo__hello {
   @extend .todo;

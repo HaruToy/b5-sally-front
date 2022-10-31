@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <TopBar></TopBar>
-    <router-view class="component"></router-view>
+    <router-view></router-view>
   </div>
 
 
@@ -21,6 +21,4 @@ export default {
   flex-direction: column;
   justify-content: space-between;
 }
-
-
 </style>
