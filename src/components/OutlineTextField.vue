@@ -73,8 +73,9 @@ export default {
           content: this.content,
           status: 'REGISTERED',
           created_date: `${cur.toISOString()}`,
+          modified_date: `${cur.toISOString()}`,
         };
-        axios.post('http://localhost:8080/api/tasks', task).then((response) => {
+        axios.post('http://localhost:8080/tasks', task).then((response) => {
           console.log(response.data);
         });
         this.content = '';
