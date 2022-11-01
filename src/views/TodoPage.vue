@@ -18,7 +18,11 @@
     >
       <div v-show="numTodo" class="todo__list__menu">
         <div class="todo__list__menu__left">
-          <MyDropdown :sel-item="selectedItem" :items="dropdownList" style="position: relative;z-index: 100;"></MyDropdown>
+          <MyDropdown
+            :sel-item="selectedItem"
+            :items="dropdownList"
+            style="position: relative; z-index: 100"
+          ></MyDropdown>
         </div>
         <button class="todo__list__menu__clear">Clear All</button>
       </div>
@@ -26,21 +30,23 @@
       <div v-show="numTodo" class="todo__list__tasks">
         <div
           v-for="item in TaskList"
-          :key="item.content"
+          :key="item.created_date"
           class="todo__list__tasks__task"
           @mousedown="selectItem(item)"
         >
           <div class="todo__list__tasks__task__check">
-            <input aria-label="test" type="checkbox" class="todo__list__tasks__task__check__box"/>
+            <input aria-label="test" type="checkbox" class="todo__list__tasks__task__check__box" />
           </div>
           <div
             :class="[
-              item.status === 'completed' ? 'todo__list__tasks__task--did' : 'todo__list__tasks__task--todo',
+              item.status === 'COMPLETED'
+                ? 'todo__list__tasks__task--did'
+                : 'todo__list__tasks__task--todo',
             ]"
           >
             {{ item.content }}
           </div>
-          <div class="todo__list__tasks__task__date">{{ item.registeredDate }}</div>
+          <div class="todo__list__tasks__task__date">{{ item.created_date.substring(5,10) }}</div>
           <button class="todo__list__tasks__task__delete"></button>
         </div>
       </div>
@@ -69,11 +75,7 @@ export default {
       selectedItem: 'Oldest',
       dropdownList: ['Oldest', 'Latest'],
       TaskList: [
-        {
-          content: '할 일1',
-          status: '',
-          registeredDate: '09/15',
-        },
+
       ],
     };
   },
@@ -93,14 +95,38 @@ export default {
     } else if (curHour > 22 || curHour <= 7) {
       this.Current = 'night';
     }
-    axios.get('https://localhost:8080/tasks').then((response) => {
+
+  },
+  mounted() {
+    axios.get('http://localhost:8080/tasks').then((response) => {
       console.log(response.data);
+      this.TaskList=response.data;
+      this.numTodo=response.data.length;
+      for(let i=0;i<this.numTodo;i+=1){
+
+        if(this.TaskList[i].status==='REGISTERED'){
+          this.numDid+=1;
+        }
+      }
+    }).catch(error => {
+      console.error(error);
     });
   },
   methods: {
     addTask() {
-      this.numDid += 1;
-      this.numTodo += 1;
+      axios.get('http://localhost:8080/tasks').then((response) => {
+        console.log(response.data);
+        this.TaskList=response.data;
+        this.numTodo=response.data.length;
+        this.numDid=0;
+        for(let i=0;i<this.numTodo;i+=1){
+          if(this.TaskList[i].status==='REGISTERED'){
+            this.numDid+=1;
+          }
+        }
+      }).catch(error => {
+        console.error(error);
+      });
     },
     selectItem(input) {
       console.log(input);
@@ -129,35 +155,36 @@ $font-color: #2c3e50;
   &__tasks {
     margin-top: 24px;
     margin-left: 60px;
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
 
     &__task {
+      margin-bottom: 8px;
       display: flex;
-
       align-items: center;
-      display: flex;
+
       background: #ffffff;
       width: 1160px;
       height: 60px;
       border-radius: 4px;
 
-      &__check{
-        margin-left:16px;
+      &__check {
+        margin-left: 16px;
         display: flex;
         align-items: center;
         width: 28px;
         height: 28px;
         border: none;
-        &__box{
+        &__box {
           width: 15px;
           height: 15px;
           border: none;
-          background: url("~/src/assets/checkboxunchecked.svg");
-
+          background: url('~/src/assets/checkboxunchecked.svg');
         }
-        &:checked{
+        &:checked {
           @extend .todo__list__tasks__task__check__box;
-          background: url("~/src/assets/checkboxchecked.svg");
+          background: url('~/src/assets/checkboxchecked.svg');
         }
       }
       &--did {
@@ -186,7 +213,7 @@ $font-color: #2c3e50;
 
         color: #000000;
       }
-      &__date{
+      &__date {
         justify-content: flex-end;
         font-family: 'Roboto';
         font-style: normal;
@@ -197,16 +224,16 @@ $font-color: #2c3e50;
 
         opacity: 0.6;
       }
-      &__delete{
+      &__delete {
         margin-left: 12px;
         justify-content: flex-end;
         width: 28px;
         height: 28px;
         border: none;
-          background: url("~/src/assets/btn_remove_nor.svg");
-        &:hover{
+        background: url('~/src/assets/btn_remove_nor.svg');
+        &:hover {
           @extend .todo__list__tasks__task__delete;
-          background: url("~/src/assets/btn_remove_hov.svg");
+          background: url('~/src/assets/btn_remove_hov.svg');
         }
       }
     }
@@ -231,7 +258,7 @@ $font-color: #2c3e50;
       align-items: center;
       border: none;
       cursor: pointer;
-      margin-left: 64px;
+      margin-right: 64px;
     }
   }
 
