@@ -22,19 +22,23 @@
             :sel-item="selectedItem"
             :items="dropdownList"
             style="position: relative; z-index: 100"
+            @Oldest="reorderTask('ASC')"
+            @Latest="reorderTask('DESC')"
           ></MyDropdown>
         </div>
-        <button class="todo__list__menu__clear">Clear All</button>
+        <button class="todo__list__menu__clear" @mousedown="clearAll">Clear All</button>
       </div>
 
       <div v-show="numTodo" class="todo__list__tasks">
         <div
           v-for="item in TaskList"
+          v-show="item.status!=='DELETED'"
           :key="item.id"
           class="todo__list__tasks__task"
         >
           <CheckBox label="라벨" :is-checked="item.status==='COMPLETED'" @checked="toggleComplete(item)"></CheckBox>
           <div
+
             :class="[
               item.status === 'COMPLETED'
                 ? 'todo__list__tasks__task--did'
@@ -45,10 +49,10 @@
             {{ item.content }}
           </div>
           <div class="todo__list__tasks__task__date">{{ item.created_date.substring(5,10) }}</div>
-          <button class="todo__list__tasks__task__delete"></button>
+          <button class="todo__list__tasks__task__delete" @mousedown="deleteTask(item)"></button>
         </div>
       </div>
-      <p v-show="!numTodo" class="todo__list--noTask">There is no task.</p>
+      <p v-show="!numTodo" class="todo__list--noTask" >There is no task.</p>
     </div>
   </div>
 </template>
@@ -98,15 +102,48 @@ export default {
     this.findAllAPI();
   },
   methods: {
+    reorderTask(how){
+      let result={};
+      if(how==='ASC'){
+        result=this.TaskList.sort((a,b)=> a.id-b.id)
+      }else{
+        result=this.TaskList.sort((a,b)=> b.id-a.id)
+      }
+      this.TaskList=result;
+    },
+    clearAll(){
+      const cur = new Date();
+      for(let i=0;i<this.TaskList.length;i+=1){
+        this.TaskList[i].status='DELETED';
+        this.TaskList[i].modified_date=`${cur.toISOString()}`;
+        this.updateAPI(this.TaskList[i]);
+      }
+      this.numDid=0;
+      this.numTodo=0;
+    },
+    deleteTask(item){
+      if(this.TaskList[item.id-1].status==='COMPLETED'){
+        this.numDid+=1;
+      }
+      this.TaskList[item.id-1].status='DELETED';
+      const cur = new Date();
+      this.TaskList[item.id-1].modified_date=`${cur.toISOString()}`;
+      this.updateAPI(this.TaskList[item.id-1]);
+      this.numDid-=1;
+      this.numTodo-=1;
+    },
     async findAllAPI(){
       const response=await axios.get('http://localhost:8080/tasks');
         // console.log(response.data);
         this.TaskList=response.data;
         this.numTodo=response.data.length;
         this.numDid=0;
-        for(let i=0;i<this.numTodo;i+=1){
+        for(let i=0;i<response.data.length;i+=1){
           if(this.TaskList[i].status==='REGISTERED'){
             this.numDid+=1;
+          }
+          if(this.TaskList[i].status==='DELETED'){
+            this.numTodo-=1;
           }
         }
     },
@@ -242,6 +279,10 @@ $font-color: #2c3e50;
       border: none;
       cursor: pointer;
       margin-right: 64px;
+      &:hover{
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 4px;
+      }
     }
   }
 

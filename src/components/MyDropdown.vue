@@ -81,6 +81,7 @@ export default {
     },
     selectItem(input){
       this.selectedItem=input;
+      this.$emit(this.selectedItem);
       this.active = false;
     }
   }
