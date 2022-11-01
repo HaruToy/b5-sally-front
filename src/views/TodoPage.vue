@@ -30,19 +30,17 @@
       <div v-show="numTodo" class="todo__list__tasks">
         <div
           v-for="item in TaskList"
-          :key="item.created_date"
+          :key="item.id"
           class="todo__list__tasks__task"
-          @mousedown="selectItem(item)"
         >
-          <div class="todo__list__tasks__task__check">
-            <input aria-label="test" type="checkbox" class="todo__list__tasks__task__check__box" />
-          </div>
+          <CheckBox label="라벨" :is-checked="item.status==='COMPLETED'" @checked="toggleComplete(item)"></CheckBox>
           <div
             :class="[
               item.status === 'COMPLETED'
                 ? 'todo__list__tasks__task--did'
                 : 'todo__list__tasks__task--todo',
             ]"
+            @mousedown="selectItem(item)"
           >
             {{ item.content }}
           </div>
@@ -58,12 +56,14 @@
 <script>
 import axios from 'axios';
 import MyDropdown from '@/components/MyDropdown.vue';
+import CheckBox from '@/components/CheckBox.vue';
 import store from '../store/index';
 import OutlineTextField from '../components/OutlineTextField.vue';
 
 export default {
   name: 'TodoPage',
   components: {
+    CheckBox,
     MyDropdown,
     OutlineTextField,
   },
@@ -84,7 +84,7 @@ export default {
       return store.getters.getName;
     },
   },
-  created() {
+  mounted() {
     const curHour = new Date().getHours();
     if (curHour > 7 && curHour <= 12) {
       this.Current = 'morning';
@@ -95,27 +95,12 @@ export default {
     } else if (curHour > 22 || curHour <= 7) {
       this.Current = 'night';
     }
-
-  },
-  mounted() {
-    axios.get('http://localhost:8080/tasks').then((response) => {
-      console.log(response.data);
-      this.TaskList=response.data;
-      this.numTodo=response.data.length;
-      for(let i=0;i<this.numTodo;i+=1){
-
-        if(this.TaskList[i].status==='REGISTERED'){
-          this.numDid+=1;
-        }
-      }
-    }).catch(error => {
-      console.error(error);
-    });
+    this.findAllAPI();
   },
   methods: {
-    addTask() {
-      axios.get('http://localhost:8080/tasks').then((response) => {
-        console.log(response.data);
+    async findAllAPI(){
+      const response=await axios.get('http://localhost:8080/tasks');
+        // console.log(response.data);
         this.TaskList=response.data;
         this.numTodo=response.data.length;
         this.numDid=0;
@@ -124,13 +109,28 @@ export default {
             this.numDid+=1;
           }
         }
-      }).catch(error => {
-        console.error(error);
-      });
+    },
+    async updateAPI(item){
+      await axios.post(`http://localhost:8080/tasks/${item.id}`,this.TaskList[item.id-1]);
+    },
+    addTask() {
+      this.findAllAPI();
     },
     selectItem(input) {
       console.log(input);
     },
+    toggleComplete(item){
+          if(this.TaskList[item.id-1].status==='COMPLETED'){
+            this.TaskList[item.id-1].status='REGISTERED';
+            this.numDid+=1;
+          }else{
+            this.TaskList[item.id-1].status='COMPLETED';
+            this.numDid-=1;
+          }
+          const cur = new Date();
+          this.TaskList[item.id-1].modified_date=`${cur.toISOString()}`;
+      this.updateAPI(this.TaskList[item.id-1]);
+    }
   },
 };
 </script>
@@ -169,24 +169,7 @@ $font-color: #2c3e50;
       height: 60px;
       border-radius: 4px;
 
-      &__check {
-        margin-left: 16px;
-        display: flex;
-        align-items: center;
-        width: 28px;
-        height: 28px;
-        border: none;
-        &__box {
-          width: 15px;
-          height: 15px;
-          border: none;
-          background: url('~/src/assets/checkboxunchecked.svg');
-        }
-        &:checked {
-          @extend .todo__list__tasks__task__check__box;
-          background: url('~/src/assets/checkboxchecked.svg');
-        }
-      }
+
       &--did {
         width: 1000px;
         margin-left: 8px;

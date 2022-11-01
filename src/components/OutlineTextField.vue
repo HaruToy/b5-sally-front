@@ -65,6 +65,9 @@ export default {
 
       setTimeout(() => this.$refs.content.focus(), 0);
     },
+    async enrollAPI(task){
+      await axios.post('http://localhost:8080/tasks', task);
+    },
     storeTask() {
       if (this.content) {
         const cur = new Date();
@@ -75,9 +78,7 @@ export default {
           created_date: `${cur.toISOString()}`,
           modified_date: `${cur.toISOString()}`,
         };
-        axios.post('http://localhost:8080/tasks', task).then((response) => {
-          console.log(response.data);
-        });
+        this.enrollAPI(task)
         this.content = '';
         this.$emit('addTask')
       }
