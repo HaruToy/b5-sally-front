@@ -44,10 +44,8 @@ export default {
       isFocused: false,
     };
   },
-  created() {
-    this.$nextTick(() => {
+  mounted() {
       this.$refs.myname.focus();
-    });
   },
   methods: {
     deleteName() {

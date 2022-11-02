@@ -68,12 +68,13 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import MyDropdown from '@/components/MyDropdown.vue';
 import CheckBox from '@/components/CheckBox.vue';
 import ModifyingTextField from '@/components/ModifyingTextField.vue';
 import store from '../store/index';
 import OutlineTextField from '../components/OutlineTextField.vue';
+import { findAll,updateTask,enrollTask } from '../api/TaskAPI';
 
 export default {
   name: 'TodoPage',
@@ -114,9 +115,39 @@ export default {
     console.log('mounted');
   },
   methods: {
+    async enrollAPI(task){
+      await enrollTask(task).then(()=>{
+         this.findAllAPI();
+      })
+      console.log('등록 됨');
+
+    },
+    async findAllAPI() {
+      console.log('findAllAPI');
+      await findAll().then((response) => {
+        this.TaskList = response;
+        this.numTodo = response.length;
+        this.numDid = 0;
+        for (let i = 0; i < response.length; i += 1) {
+          if (this.TaskList[i].status === 'REGISTERED') {
+            this.numDid += 1;
+          }
+          if (this.TaskList[i].status === 'DELETED') {
+            this.numTodo -= 1;
+          }
+        }
+      });;
+
+    },
+    async updateAPI(item) {
+      const cur = new Date();
+      this.TaskList[item.id - 1].modified_date = `${cur.toISOString()}`;
+    await updateTask(this.TaskList[item.id - 1]).then(()=>{
+
+    })
+      },
     modifyTask(content,id) {
       this.TaskList[id - 1].content = content;
-      console.log(this.TaskList);
       this.TaskList[id-1].status=this.TaskList[id-1].status.substring(0,this.TaskList[id-1].status.length-1)
       this.updateAPI(this.TaskList[id-1]);
 
@@ -132,10 +163,8 @@ export default {
       this.TaskList = result;
     },
     clearAll() {
-      const cur = new Date();
       for (let i = 0; i < this.TaskList.length; i += 1) {
         this.TaskList[i].status = 'DELETED';
-        this.TaskList[i].modified_date = `${cur.toISOString()}`;
         this.updateAPI(this.TaskList[i]);
       }
       this.numDid = 0;
@@ -146,36 +175,22 @@ export default {
         this.numDid += 1;
       }
       this.TaskList[item.id - 1].status = 'DELETED';
-      const cur = new Date();
-      this.TaskList[item.id - 1].modified_date = `${cur.toISOString()}`;
       this.updateAPI(this.TaskList[item.id - 1]);
       this.numDid -= 1;
       this.numTodo -= 1;
     },
-    async findAllAPI() {
-      console.log('findAllAPI');
-      const response = await axios.get('http://localhost:8080/tasks');
-      // console.log(response.data);
-      this.TaskList = response.data;
-      this.numTodo = response.data.length;
-      this.numDid = 0;
-      for (let i = 0; i < response.data.length; i += 1) {
-        if (this.TaskList[i].status === 'REGISTERED') {
-          this.numDid += 1;
-        }
-        if (this.TaskList[i].status === 'DELETED') {
-          this.numTodo -= 1;
-        }
-        this.TaskList[i].isModifying = false;
-      }
-    },
-    async updateAPI(item) {
+
+    addTask(content1) {
       const cur = new Date();
-      this.TaskList[item.id - 1].modified_date = `${cur.toISOString()}`;
-      await axios.post(`http://localhost:8080/tasks/${item.id}`, this.TaskList[item.id - 1]);
-    },
-    addTask() {
-      this.findAllAPI();
+      const task = {
+        owner: store.getters.getName,
+        content: content1,
+        status: 'REGISTERED',
+        created_date: `${cur.toISOString()}`,
+        modified_date: `${cur.toISOString()}`,
+      };
+      this.enrollAPI(task)
+
     },
     selectItem(i) {
       if(this.TaskList[i - 1].status !=='COMPLETED'){

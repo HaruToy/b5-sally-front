@@ -36,8 +36,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-import store from '../store/index'
+
 
 export default {
   name: 'OutlineTextField',
@@ -48,7 +47,6 @@ export default {
       content: '',
     };
   },
-  created() {},
   methods: {
     IsInput(event) {
       const updatedText = event.target.value;
@@ -65,22 +63,10 @@ export default {
 
       setTimeout(() => this.$refs.content.focus(), 0);
     },
-    async enrollAPI(task){
-      await axios.post('http://localhost:8080/tasks', task);
-    },
     storeTask() {
       if (this.content) {
-        const cur = new Date();
-        const task = {
-          owner: store.getters.getName,
-          content: this.content,
-          status: 'REGISTERED',
-          created_date: `${cur.toISOString()}`,
-          modified_date: `${cur.toISOString()}`,
-        };
-        this.enrollAPI(task)
+        this.$emit('addTask',this.content)
         this.content = '';
-        this.$emit('addTask')
       }
     },
   },

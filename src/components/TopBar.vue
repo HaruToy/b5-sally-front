@@ -15,9 +15,11 @@
 export default {
   name: 'TopBar',
   data(){
-    return {}
+    return {
+      curDate:''
+    }
   },
-  created(){
+  mounted(){
       const date=new Date();
     const dayStr = new Date(date.getFullYear(),date.getMonth()+1,date.getDay()-1).toString();
       this.curDate=`${date.getMonth()+1}/${date.getDate()}\n
