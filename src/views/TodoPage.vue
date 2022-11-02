@@ -30,29 +30,39 @@
       </div>
 
       <div v-show="numTodo" class="todo__list__tasks">
-        <div
-          v-for="item in TaskList"
-          v-show="item.status!=='DELETED'"
-          :key="item.id"
-          class="todo__list__tasks__task"
-        >
-          <CheckBox label="라벨" :is-checked="item.status==='COMPLETED'" @checked="toggleComplete(item)"></CheckBox>
+        <div v-for="item in TaskList" v-show="item.status !== 'DELETED'" :key="item.id">
           <div
-
-            :class="[
-              item.status === 'COMPLETED'
-                ? 'todo__list__tasks__task--did'
-                : 'todo__list__tasks__task--todo',
-            ]"
-            @mousedown="selectItem(item)"
+            v-if="item.status.substring(item.status.length - 1,item.status.length) !== '0'"
+            class="todo__list__tasks__task"
           >
-            {{ item.content }}
+            <CheckBox
+              :is-checked="item.status === 'COMPLETED'"
+              @checked="toggleComplete(item)"
+            ></CheckBox>
+            <div
+              :class="[
+                item.status === 'COMPLETED'
+                  ? 'todo__list__tasks__task--did'
+                  : 'todo__list__tasks__task--todo',
+              ]"
+              @mousedown="selectItem(item.id)"
+            >
+              {{ item.content }}
+            </div>
+            <div class="todo__list__tasks__task__date">
+              {{ item.created_date.substring(5, 10) }}
+            </div>
+            <button class="todo__list__tasks__task__delete" @mousedown="deleteTask(item)"></button>
           </div>
-          <div class="todo__list__tasks__task__date">{{ item.created_date.substring(5,10) }}</div>
-          <button class="todo__list__tasks__task__delete" @mousedown="deleteTask(item)"></button>
+          <ModifyingTextField
+            v-else
+            :id="item.id"
+            :content="item.content"
+            @modifyTask="modifyTask"
+          ></ModifyingTextField>
         </div>
       </div>
-      <p v-show="!numTodo" class="todo__list--noTask" >There is no task.</p>
+      <p v-show="!numTodo" class="todo__list--noTask">There is no task.</p>
     </div>
   </div>
 </template>
@@ -61,12 +71,14 @@
 import axios from 'axios';
 import MyDropdown from '@/components/MyDropdown.vue';
 import CheckBox from '@/components/CheckBox.vue';
+import ModifyingTextField from '@/components/ModifyingTextField.vue';
 import store from '../store/index';
 import OutlineTextField from '../components/OutlineTextField.vue';
 
 export default {
   name: 'TodoPage',
   components: {
+    ModifyingTextField,
     CheckBox,
     MyDropdown,
     OutlineTextField,
@@ -78,9 +90,8 @@ export default {
       numTodo: 0,
       selectedItem: 'Oldest',
       dropdownList: ['Oldest', 'Latest'],
-      TaskList: [
-
-      ],
+      TaskList: [],
+      id: '',
     };
   },
   computed: {
@@ -100,74 +111,90 @@ export default {
       this.Current = 'night';
     }
     this.findAllAPI();
+    console.log('mounted');
   },
   methods: {
-    reorderTask(how){
-      let result={};
-      if(how==='ASC'){
-        result=this.TaskList.sort((a,b)=> a.id-b.id)
-      }else{
-        result=this.TaskList.sort((a,b)=> b.id-a.id)
-      }
-      this.TaskList=result;
+    modifyTask(content,id) {
+      this.TaskList[id - 1].content = content;
+      console.log(this.TaskList);
+      this.TaskList[id-1].status=this.TaskList[id-1].status.substring(0,this.TaskList[id-1].status.length-1)
+      this.updateAPI(this.TaskList[id-1]);
+
     },
-    clearAll(){
+
+    reorderTask(how) {
+      let result = {};
+      if (how === 'ASC') {
+        result = this.TaskList.sort((a, b) => a.id - b.id);
+      } else {
+        result = this.TaskList.sort((a, b) => b.id - a.id);
+      }
+      this.TaskList = result;
+    },
+    clearAll() {
       const cur = new Date();
-      for(let i=0;i<this.TaskList.length;i+=1){
-        this.TaskList[i].status='DELETED';
-        this.TaskList[i].modified_date=`${cur.toISOString()}`;
+      for (let i = 0; i < this.TaskList.length; i += 1) {
+        this.TaskList[i].status = 'DELETED';
+        this.TaskList[i].modified_date = `${cur.toISOString()}`;
         this.updateAPI(this.TaskList[i]);
       }
-      this.numDid=0;
-      this.numTodo=0;
+      this.numDid = 0;
+      this.numTodo = 0;
     },
-    deleteTask(item){
-      if(this.TaskList[item.id-1].status==='COMPLETED'){
-        this.numDid+=1;
+    deleteTask(item) {
+      if (this.TaskList[item.id - 1].status === 'COMPLETED') {
+        this.numDid += 1;
       }
-      this.TaskList[item.id-1].status='DELETED';
+      this.TaskList[item.id - 1].status = 'DELETED';
       const cur = new Date();
-      this.TaskList[item.id-1].modified_date=`${cur.toISOString()}`;
-      this.updateAPI(this.TaskList[item.id-1]);
-      this.numDid-=1;
-      this.numTodo-=1;
+      this.TaskList[item.id - 1].modified_date = `${cur.toISOString()}`;
+      this.updateAPI(this.TaskList[item.id - 1]);
+      this.numDid -= 1;
+      this.numTodo -= 1;
     },
-    async findAllAPI(){
-      const response=await axios.get('http://localhost:8080/tasks');
-        // console.log(response.data);
-        this.TaskList=response.data;
-        this.numTodo=response.data.length;
-        this.numDid=0;
-        for(let i=0;i<response.data.length;i+=1){
-          if(this.TaskList[i].status==='REGISTERED'){
-            this.numDid+=1;
-          }
-          if(this.TaskList[i].status==='DELETED'){
-            this.numTodo-=1;
-          }
+    async findAllAPI() {
+      console.log('findAllAPI');
+      const response = await axios.get('http://localhost:8080/tasks');
+      // console.log(response.data);
+      this.TaskList = response.data;
+      this.numTodo = response.data.length;
+      this.numDid = 0;
+      for (let i = 0; i < response.data.length; i += 1) {
+        if (this.TaskList[i].status === 'REGISTERED') {
+          this.numDid += 1;
         }
+        if (this.TaskList[i].status === 'DELETED') {
+          this.numTodo -= 1;
+        }
+        this.TaskList[i].isModifying = false;
+      }
     },
-    async updateAPI(item){
-      await axios.post(`http://localhost:8080/tasks/${item.id}`,this.TaskList[item.id-1]);
+    async updateAPI(item) {
+      const cur = new Date();
+      this.TaskList[item.id - 1].modified_date = `${cur.toISOString()}`;
+      await axios.post(`http://localhost:8080/tasks/${item.id}`, this.TaskList[item.id - 1]);
     },
     addTask() {
       this.findAllAPI();
     },
-    selectItem(input) {
-      console.log(input);
+    selectItem(i) {
+      if(this.TaskList[i - 1].status !=='COMPLETED'){
+        this.TaskList[i - 1].status += '0';
+      }
     },
-    toggleComplete(item){
-          if(this.TaskList[item.id-1].status==='COMPLETED'){
-            this.TaskList[item.id-1].status='REGISTERED';
-            this.numDid+=1;
-          }else{
-            this.TaskList[item.id-1].status='COMPLETED';
-            this.numDid-=1;
-          }
-          const cur = new Date();
-          this.TaskList[item.id-1].modified_date=`${cur.toISOString()}`;
-      this.updateAPI(this.TaskList[item.id-1]);
-    }
+    toggleComplete(item) {
+      if (
+        this.TaskList[item.id - 1].status === 'COMPLETED'
+      ) {
+        this.TaskList[item.id - 1].status = 'REGISTERED';
+        this.numDid += 1;
+      } else {
+        this.TaskList[item.id - 1].status = 'COMPLETED';
+        this.numDid -= 1;
+      }
+
+      this.updateAPI(this.TaskList[item.id - 1]);
+    },
   },
 };
 </script>
@@ -206,7 +233,6 @@ $font-color: #2c3e50;
       height: 60px;
       border-radius: 4px;
 
-
       &--did {
         width: 1000px;
         margin-left: 8px;
@@ -216,7 +242,7 @@ $font-color: #2c3e50;
         font-size: 16px;
         line-height: 24px;
         /* identical to box height, or 150% */
-
+        cursor: pointer;
         color: #000000;
         text-decoration-line: line-through;
       }
@@ -230,7 +256,7 @@ $font-color: #2c3e50;
         font-size: 16px;
         line-height: 24px;
         /* identical to box height, or 150% */
-
+        cursor: pointer;
         color: #000000;
       }
       &__date {
@@ -279,7 +305,7 @@ $font-color: #2c3e50;
       border: none;
       cursor: pointer;
       margin-right: 64px;
-      &:hover{
+      &:hover {
         background: rgba(0, 0, 0, 0.08);
         border-radius: 4px;
       }
