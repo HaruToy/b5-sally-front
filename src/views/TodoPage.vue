@@ -232,7 +232,7 @@ $font-color: #2c3e50;
   background: #f2f2f2;
   min-height: 400px;
   flex-direction: column;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   &__tasks {
     margin-top: 24px;
@@ -247,7 +247,7 @@ $font-color: #2c3e50;
       align-items: center;
       //justify-content: space-between;
       background: #ffffff;
-      width: 90%;
+      width: 88vw;
       height: 60px;
       border-radius: 4px;
 

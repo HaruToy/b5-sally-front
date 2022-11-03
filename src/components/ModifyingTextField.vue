@@ -104,7 +104,7 @@ $font-color: #ffffff;
     font-size: 0;
 
     &__input {
-      width: 1155px;
+      width:88vw;
       height: 60px;
       display: flex;
 
@@ -141,7 +141,7 @@ $font-color: #ffffff;
         width: 20px;
         height: 20px;
         margin-top: 19px;
-        margin-left: -63px;
+        margin-left: -5%;
         background: url('~/src/assets/textfieldsendbutton.svg');
         border: none 10px;
 

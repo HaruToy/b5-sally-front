@@ -90,7 +90,7 @@ $font-color: #ffffff;
     font-size: 0;
 
     &__input {
-      width: 648px;
+      width:84vw;
       height: 48px;
       display: flex;
 
