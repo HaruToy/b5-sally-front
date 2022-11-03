@@ -32,7 +32,7 @@
       <div v-show="numTodo" class="todo__list__tasks">
         <div v-for="item in TaskList" v-show="item.status !== 'DELETED'" :key="item.id">
           <div
-            v-if="item.status.substring(item.status.length - 1,item.status.length) !== '0'"
+            v-if="item.status.substring(item.status.length - 1, item.status.length) !== '0'"
             class="todo__list__tasks__task"
           >
             <CheckBox
@@ -74,7 +74,7 @@ import CheckBox from '@/components/CheckBox.vue';
 import ModifyingTextField from '@/components/ModifyingTextField.vue';
 import store from '../store/index';
 import OutlineTextField from '../components/OutlineTextField.vue';
-import { findAll,updateTask,enrollTask } from '../api/TaskAPI';
+import { findAll, updateTask, enrollTask } from '../api/TaskAPI';
 
 export default {
   name: 'TodoPage',
@@ -112,28 +112,29 @@ export default {
       this.Current = 'night';
     }
     this.findAllAPI();
-
   },
   methods: {
-    reorder(){
-      if(this.selectedItem==='Oldest'){
-        this.reorderTask('ASC')
-      }else if(this.selectedItem==='Latest'){
-
-        this.reorderTask('DESC')
+    reorder() {
+      if (this.selectedItem === 'Oldest') {
+        this.reorderTask('ASC');
+      } else if (this.selectedItem === 'Latest') {
+        this.reorderTask('DESC');
       }
     },
-    async enrollAPI(task){
-      await enrollTask(task).then(()=>{
-         this.findAllAPI();
-      })
+    async enrollAPI(task) {
+      const response =await enrollTask(task);
+      if (response.status === 200) {
+        await this.findAllAPI();
+      }
     },
     async findAllAPI() {
-      await findAll().then((response) => {
-        this.TaskList = response;
-        this.numTodo = response.length;
+      const response = await findAll();
+      if (response.status === 200) {
+        const res=response.data;
+        this.TaskList = res;
+        this.numTodo = res.length;
         this.numDid = 0;
-        for (let i = 0; i < response.length; i += 1) {
+        for (let i = 0; i < res.length; i += 1) {
           if (this.TaskList[i].status === 'REGISTERED') {
             this.numDid += 1;
           }
@@ -141,31 +142,30 @@ export default {
             this.numTodo -= 1;
           }
         }
-        this.reorder()
-      });;
-
+        this.reorder();
+      }
     },
     async updateAPI(item) {
       const cur = new Date();
       this.TaskList[item.id - 1].modified_date = `${cur.toISOString()}`;
-    await updateTask(this.TaskList[item.id - 1]).then(()=>{
-
-    })
-      },
-    modifyTask(content,id) {
+      await updateTask(this.TaskList[item.id - 1]);
+    },
+    modifyTask(content, id) {
       this.TaskList[id - 1].content = content;
-      this.TaskList[id-1].status=this.TaskList[id-1].status.substring(0,this.TaskList[id-1].status.length-1)
-      this.updateAPI(this.TaskList[id-1]);
-
+      this.TaskList[id - 1].status = this.TaskList[id - 1].status.substring(
+        0,
+        this.TaskList[id - 1].status.length - 1
+      );
+      this.updateAPI(this.TaskList[id - 1]);
     },
 
     reorderTask(how) {
       let result = {};
       if (how === 'ASC') {
-        this.selectedItem='Oldest'
+        this.selectedItem = 'Oldest';
         result = this.TaskList.sort((a, b) => a.id - b.id);
       } else {
-        this.selectedItem='Latest'
+        this.selectedItem = 'Latest';
         result = this.TaskList.sort((a, b) => b.id - a.id);
       }
       this.TaskList = result;
@@ -197,25 +197,22 @@ export default {
         created_date: `${cur.toISOString()}`,
         modified_date: `${cur.toISOString()}`,
       };
-      this.enrollAPI(task)
+      this.enrollAPI(task);
       this.reorder();
     },
     selectItem(i) {
-      if(this.TaskList[i - 1].status !=='COMPLETED'){
+      if (this.TaskList[i - 1].status !== 'COMPLETED') {
         this.TaskList[i - 1].status += '0';
       }
     },
     toggleComplete(item) {
-      if (
-        this.TaskList[item.id - 1].status === 'COMPLETED'
-      ) {
+      if (this.TaskList[item.id - 1].status === 'COMPLETED') {
         this.TaskList[item.id - 1].status = 'REGISTERED';
         this.numDid += 1;
       } else {
         this.TaskList[item.id - 1].status = 'COMPLETED';
         this.numDid -= 1;
       }
-
       this.updateAPI(this.TaskList[item.id - 1]);
     },
   },
@@ -242,6 +239,7 @@ $font-color: #2c3e50;
   flex-direction: column;
   width: 100vw;
   height: 100vh;
+
   &__tasks {
     margin-top: 24px;
     margin-left: 60px;
@@ -287,6 +285,7 @@ $font-color: #2c3e50;
         cursor: pointer;
         color: #000000;
       }
+
       &__date {
         display: flex;
         width: 35px;
@@ -301,6 +300,7 @@ $font-color: #2c3e50;
 
         opacity: 0.6;
       }
+
       &__delete {
         display: flex;
         margin-right: 12px;
@@ -310,6 +310,7 @@ $font-color: #2c3e50;
         height: 28px;
         border: none;
         background: url('~/src/assets/btn_remove_nor.svg');
+
         &:hover {
           @extend .todo__list__tasks__task__delete;
           background: url('~/src/assets/btn_remove_hov.svg');
@@ -346,6 +347,7 @@ $font-color: #2c3e50;
       cursor: pointer;
       margin-right: 12%;
       opacity: 0.6;
+
       &:hover {
         background: rgba(0, 0, 0, 0.08);
         opacity: 1;

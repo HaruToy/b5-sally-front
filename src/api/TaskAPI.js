@@ -13,7 +13,7 @@ async function findAll() {
   } catch (e) {
     console.log(e);
   }
-  return response.data;
+  return response;
 }
 
 async function enrollTask(task) {
