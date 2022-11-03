@@ -270,10 +270,12 @@ $font-color: #2c3e50;
         /* identical to box height, or 150% */
         cursor: pointer;
         color: #000000;
+        opacity: 0.6;
         text-decoration-line: line-through;
       }
 
       &--todo {
+        opacity: 1;
         width: 80%;
         margin-left: 8px;
         font-family: 'Roboto';
