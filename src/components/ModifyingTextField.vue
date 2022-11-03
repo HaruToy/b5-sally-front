@@ -61,7 +61,9 @@ export default {
       this.inputText = updatedText;
     },
     outFocus() {
+      this.storeTask2();
       this.sending = null;
+      this.placeholder=''
     },
     onFocus() {
       this.sending = '1';

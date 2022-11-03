@@ -68,7 +68,6 @@
 </template>
 
 <script>
-// import axios from 'axios';
 import MyDropdown from '@/components/MyDropdown.vue';
 import CheckBox from '@/components/CheckBox.vue';
 import ModifyingTextField from '@/components/ModifyingTextField.vue';
@@ -122,7 +121,7 @@ export default {
       }
     },
     async enrollAPI(task) {
-      const response =await enrollTask(task);
+      const response = await enrollTask(task);
       if (response.status === 200) {
         await this.findAllAPI();
       }
@@ -130,7 +129,7 @@ export default {
     async findAllAPI() {
       const response = await findAll();
       if (response.status === 200) {
-        const res=response.data;
+        const res = response.data;
         this.TaskList = res;
         this.numTodo = res.length;
         this.numDid = 0;
