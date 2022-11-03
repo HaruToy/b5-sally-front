@@ -223,6 +223,8 @@ $font-color: #2c3e50;
   color: $font-color;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 
 .todo__list {
@@ -230,7 +232,8 @@ $font-color: #2c3e50;
   background: #f2f2f2;
   min-height: 400px;
   flex-direction: column;
-
+  width: 100%;
+  height: 100vh;
   &__tasks {
     margin-top: 24px;
     margin-left: 60px;
@@ -242,14 +245,14 @@ $font-color: #2c3e50;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
-
+      //justify-content: space-between;
       background: #ffffff;
-      width: 1160px;
+      width: 90%;
       height: 60px;
       border-radius: 4px;
 
       &--did {
-        width: 1000px;
+        width: 80%;
         margin-left: 8px;
         font-family: 'Roboto';
         font-style: normal;
@@ -263,7 +266,7 @@ $font-color: #2c3e50;
       }
 
       &--todo {
-        width: 1000px;
+        width: 80%;
         margin-left: 8px;
         font-family: 'Roboto';
         font-style: normal;
@@ -275,6 +278,9 @@ $font-color: #2c3e50;
         color: #000000;
       }
       &__date {
+        display: flex;
+        width: 35px;
+        margin-left: 8%;
         justify-content: flex-end;
         font-family: 'Roboto';
         font-style: normal;
@@ -286,7 +292,9 @@ $font-color: #2c3e50;
         opacity: 0.6;
       }
       &__delete {
-        margin-left: 12px;
+        display: flex;
+        margin-right: 12px;
+        margin-left: 1%;
         justify-content: flex-end;
         width: 28px;
         height: 28px;
@@ -301,7 +309,7 @@ $font-color: #2c3e50;
   }
 
   &__menu {
-    width: 1280px;
+    width: 100%;
     display: flex;
     margin-top: 24px;
     margin-left: 60px;
@@ -315,13 +323,22 @@ $font-color: #2c3e50;
     }
 
     &__clear {
+      width: 80px;
+      height: 40px;
       justify-content: flex-end;
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 18px;
       align-items: center;
       border: none;
       cursor: pointer;
-      margin-right: 64px;
+      margin-right: 12%;
+      opacity: 0.6;
       &:hover {
         background: rgba(0, 0, 0, 0.08);
+        opacity: 1;
         border-radius: 4px;
       }
     }

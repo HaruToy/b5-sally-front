@@ -107,6 +107,7 @@ $font-size: 16px;
     justify-content: left;
     align-items: center;
     &__selected {
+      border-radius: 4px;
       font-style: normal;
       font-weight: 400;
       font-family: $font-family;
@@ -141,6 +142,7 @@ $font-size: 16px;
     &__button {
       background-color: #ffffff;
       &__selected {
+        border-radius: 4px;
         background-color: #ffffff;
         font-style: normal;
         font-weight: 400;

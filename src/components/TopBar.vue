@@ -42,7 +42,7 @@ $font-color: #ffffff;
   height: 48px;
   background: #6c77a7;
   padding: 0 20px;
-  width: 1280px;
+  width: 100%;
   height: 48px;
   &__left {
     display: flex;
