@@ -40,7 +40,6 @@ async function updateTask(item) {
   };
   let response;
   try {
-    console.log(item);
     response = await axios(option);
   } catch (e) {
     console.log(e);

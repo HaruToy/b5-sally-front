@@ -112,18 +112,23 @@ export default {
       this.Current = 'night';
     }
     this.findAllAPI();
-    console.log('mounted');
+
   },
   methods: {
+    reorder(){
+      if(this.selectedItem==='Oldest'){
+        this.reorderTask('ASC')
+      }else if(this.selectedItem==='Latest'){
+
+        this.reorderTask('DESC')
+      }
+    },
     async enrollAPI(task){
       await enrollTask(task).then(()=>{
          this.findAllAPI();
       })
-      console.log('등록 됨');
-
     },
     async findAllAPI() {
-      console.log('findAllAPI');
       await findAll().then((response) => {
         this.TaskList = response;
         this.numTodo = response.length;
@@ -136,6 +141,7 @@ export default {
             this.numTodo -= 1;
           }
         }
+        this.reorder()
       });;
 
     },
@@ -156,8 +162,10 @@ export default {
     reorderTask(how) {
       let result = {};
       if (how === 'ASC') {
+        this.selectedItem='Oldest'
         result = this.TaskList.sort((a, b) => a.id - b.id);
       } else {
+        this.selectedItem='Latest'
         result = this.TaskList.sort((a, b) => b.id - a.id);
       }
       this.TaskList = result;
@@ -190,7 +198,7 @@ export default {
         modified_date: `${cur.toISOString()}`,
       };
       this.enrollAPI(task)
-
+      this.reorder();
     },
     selectItem(i) {
       if(this.TaskList[i - 1].status !=='COMPLETED'){

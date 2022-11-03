@@ -33,7 +33,7 @@ export default {
   directives: {
     clickOutside: vClickOutside.directive
   },
-  props:['selItem','Items'],
+  props:['selItem','items'],
   data(){
     return{
       active:false,
@@ -67,7 +67,7 @@ export default {
   },
   mounted() {
     this.selectedItem=this.$props.selItem;
-    this.dropdownList=this.$props.Items;
+    this.dropdownList=this.$props.items;
   },
   methods:{
     getDropdownList(){
