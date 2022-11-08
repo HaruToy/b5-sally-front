@@ -53,6 +53,7 @@ export default {
     };
   },
   mounted() {
+    // console.log(this.$props.content);
     setTimeout(() => this.$refs.content1.focus(), 0);
   },
   methods: {

@@ -150,12 +150,16 @@ export default {
       await updateTask(this.TaskList[item.id - 1]);
     },
     modifyTask(content, id) {
-      this.TaskList[id - 1].content = content;
-      this.TaskList[id - 1].status = this.TaskList[id - 1].status.substring(
+      let index=id;
+      if(this.selectedItem==='Latest'){
+        index=this.TaskList.length-id+1;
+      }
+      this.TaskList[index - 1].content = content;
+      this.TaskList[index - 1].status = this.TaskList[index - 1].status.substring(
         0,
-        this.TaskList[id - 1].status.length - 1
+        this.TaskList[index - 1].status.length - 1
       );
-      this.updateAPI(this.TaskList[id - 1]);
+      this.updateAPI(this.TaskList[index - 1]);
     },
 
     reorderTask(how) {
@@ -200,9 +204,15 @@ export default {
       this.reorder();
     },
     selectItem(i) {
-      if (this.TaskList[i - 1].status !== 'COMPLETED') {
-        this.TaskList[i - 1].status += '0';
+      let index=i;
+      if(this.selectedItem === 'Latest'){
+          index=this.TaskList.length-i+1;
       }
+        if (this.TaskList[index - 1].status !== 'COMPLETED') {
+          this.TaskList[index - 1].status += '0';
+        }
+
+
     },
     toggleComplete(item) {
       if (this.TaskList[item.id - 1].status === 'COMPLETED') {
@@ -265,7 +275,7 @@ $font-color: #2c3e50;
         font-size: 16px;
         line-height: 24px;
         /* identical to box height, or 150% */
-        cursor: pointer;
+        cursor: text;
         color: #000000;
         opacity: 0.6;
         text-decoration-line: line-through;
@@ -281,7 +291,7 @@ $font-color: #2c3e50;
         font-size: 16px;
         line-height: 24px;
         /* identical to box height, or 150% */
-        cursor: pointer;
+        cursor: text;
         color: #000000;
       }
 
